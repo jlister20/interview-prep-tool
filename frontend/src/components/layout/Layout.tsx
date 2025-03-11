@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { 
-  AppBar, 
-  Box, 
-  Container, 
-  CssBaseline, 
-  Toolbar, 
-  Typography, 
-  IconButton, 
-  Menu, 
-  MenuItem, 
+import {
+  AppBar,
+  Box,
+  Container,
+  CssBaseline,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
   Button,
   Avatar,
   Drawer,
@@ -20,13 +20,13 @@ import {
   ListItemText,
   Divider
 } from '@mui/material';
-import { 
-  Menu as MenuIcon, 
-  AccountCircle, 
-  Dashboard, 
-  Description, 
-  QuestionAnswer, 
-  Feedback, 
+import {
+  Menu as MenuIcon,
+  AccountCircle,
+  Dashboard,
+  Description,
+  QuestionAnswer,
+  Feedback,
   Logout,
   ChevronLeft
 } from '@mui/icons-material';
@@ -41,10 +41,10 @@ const Layout = () => {
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  
+
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -52,17 +52,17 @@ const Layout = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
   const handleLogout = () => {
     handleClose();
     dispatch(logout() as any);
     navigate('/');
   };
-  
+
   const handleDrawerOpen = () => {
     setDrawerOpen(true);
   };
-  
+
   const handleDrawerClose = () => {
     setDrawerOpen(false);
   };
@@ -71,7 +71,7 @@ const Layout = () => {
     { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
     { text: 'Upload Documents', icon: <Description />, path: '/upload' },
     { text: 'Interview Simulation', icon: <QuestionAnswer />, path: '/interview' },
-    { text: 'Profile', icon: <AccountCircle />, path: '/profile' }
+    { text: 'Profile', icon: <AccountCircle />, path: '/profile' },
   ];
 
   return (
@@ -127,7 +127,9 @@ const Layout = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem component={RouterLink} to="/profile" onClick={handleClose}>Profile</MenuItem>
+                <MenuItem component={RouterLink} to="/profile" onClick={handleClose}>
+                  Profile
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </div>
@@ -158,7 +160,9 @@ const Layout = () => {
             },
           }}
         >
-          <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', px: 1 }}>
+          <Toolbar
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', px: 1 }}
+          >
             <IconButton onClick={handleDrawerClose}>
               <ChevronLeft />
             </IconButton>
@@ -166,10 +170,10 @@ const Layout = () => {
           <Divider />
           <List>
             {menuItems.map((item) => (
-              <ListItem 
-                button 
-                key={item.text} 
-                component={RouterLink} 
+              <ListItem
+                button
+                key={item.text}
+                component={RouterLink}
                 to={item.path}
                 onClick={handleDrawerClose}
               >
@@ -179,7 +183,9 @@ const Layout = () => {
             ))}
             <Divider />
             <ListItem button onClick={handleLogout}>
-              <ListItemIcon><Logout /></ListItemIcon>
+              <ListItemIcon>
+                <Logout />
+              </ListItemIcon>
               <ListItemText primary="Logout" />
             </ListItem>
           </List>

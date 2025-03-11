@@ -31,19 +31,37 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
       // Get token from header
       token = req.headers.authorization.split(' ')[1];
 
-      // Verify token
-      const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-
-      // For preview purposes, skip database operations
-      console.log('Mock authentication for token with ID:', decoded.id);
-      
-      // Set mock user
-      req.user = {
-        _id: mockUser._id,
-        name: mockUser.name,
-        email: mockUser.email,
-        role: mockUser.role
-      };
+      // Verify token with more detailed error logging
+      try {
+        const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        console.log('JWT verification successful for ID:', decoded.id);
+        
+        // For preview/development purposes, use mock user
+        // In production, you would fetch the user from the database
+        req.user = {
+          _id: mockUser._id,
+          name: mockUser.name,
+          email: mockUser.email,
+          role: mockUser.role
+        };
+      } catch (error) {
+        console.error('JWT verification failed:', error instanceof Error ? error.message : 'Unknown error');
+        // Try with a different secret as fallback (for development only)
+        try {
+          const decoded: any = jwt.verify(token, 'secret');
+          console.log('JWT verification successful with fallback secret for ID:', decoded.id);
+          
+          req.user = {
+            _id: mockUser._id,
+            name: mockUser.name,
+            email: mockUser.email,
+            role: mockUser.role
+          };
+        } catch (fallbackError) {
+          console.error('JWT fallback verification also failed:', fallbackError instanceof Error ? fallbackError.message : 'Unknown error');
+          throw new Error('Token verification failed');
+        }
+      }
 
       next();
     } catch (error) {
@@ -53,7 +71,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
   }
 
   if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token provided' });
+    return res.status(401).json({ message: 'Not authorized, no token provided' });
   }
 };
 

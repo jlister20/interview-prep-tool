@@ -47,9 +47,19 @@ const RegisterPage = () => {
     onSubmit: async (values) => {
       try {
         const { name, email, password } = values;
-        await dispatch(register({ name, email, password }) as any);
-        navigate('/dashboard');
+        console.log('Register form submitted with values:', { name, email });
+        
+        const resultAction = await dispatch(register({ name, email, password }) as any);
+        
+        if (register.fulfilled.match(resultAction)) {
+          console.log('Registration successful, navigating to dashboard');
+          navigate('/dashboard');
+        } else if (register.rejected.match(resultAction)) {
+          console.error('Registration failed:', resultAction.payload);
+          setShowError(true);
+        }
       } catch (err) {
+        console.error('Unexpected error during registration:', err);
         setShowError(true);
       }
     }
@@ -59,6 +69,13 @@ const RegisterPage = () => {
     setShowError(false);
     dispatch(clearError());
   };
+
+  // If user is already authenticated, redirect to dashboard
+  if (auth.isAuthenticated && auth.token) {
+    console.log('User is already authenticated, redirecting to dashboard');
+    navigate('/dashboard');
+    return null;
+  }
 
   return (
     <Container component="main" maxWidth="sm">

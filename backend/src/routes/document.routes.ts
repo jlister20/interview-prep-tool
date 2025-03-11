@@ -11,11 +11,21 @@ import {
 import { protect } from '../middleware/auth.middleware';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+
+// Define uploads directory with absolute path
+const uploadsDir = path.join(__dirname, '../../uploads');
+
+// Ensure uploads directory exists
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log(`Created uploads directory at: ${uploadsDir}`);
+}
 
 // Configure multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);

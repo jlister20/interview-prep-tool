@@ -30,11 +30,31 @@ export const register = createAsyncThunk(
   'auth/register',
   async ({ name, email, password }: { name: string; email: string; password: string }, { rejectWithValue }) => {
     try {
+      console.log('Attempting to register user:', { name, email });
       const response = await authAPI.register({ name, email, password });
-      localStorage.setItem('token', response.data.token);
-      return response.data;
+      const userData = response.data;
+      
+      console.log('Registration response:', userData);
+      
+      // Store the token in localStorage
+      localStorage.setItem('token', userData.token);
+      
+      // Return the user data in the expected format
+      return {
+        user: {
+          id: userData._id || userData.id,
+          name: userData.name,
+          email: userData.email
+        },
+        token: userData.token
+      };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Registration failed');
+      console.error('Registration error:', error);
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+      }
+      return rejectWithValue(error.response?.data?.message || error.message || 'Registration failed');
     }
   }
 );
@@ -44,10 +64,23 @@ export const login = createAsyncThunk(
   async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await authAPI.login({ email, password });
-      localStorage.setItem('token', response.data.token);
-      return response.data;
+      const userData = response.data;
+      
+      // Store the token in localStorage
+      localStorage.setItem('token', userData.token);
+      
+      // Return the user data in the expected format
+      return {
+        user: {
+          id: userData._id,
+          name: userData.name,
+          email: userData.email
+        },
+        token: userData.token
+      };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed');
+      console.error('Login error:', error);
+      return rejectWithValue(error.response?.data?.message || error.message || 'Login failed');
     }
   }
 );
@@ -66,10 +99,20 @@ export const checkAuthStatus = createAsyncThunk('auth/checkStatus', async (_, { 
     }
     
     const response = await authAPI.getProfile();
-    return { user: response.data.data, token };
+    const userData = response.data;
+    
+    return {
+      user: {
+        id: userData._id,
+        name: userData.name,
+        email: userData.email
+      },
+      token
+    };
   } catch (error: any) {
+    console.error('Auth check error:', error);
     localStorage.removeItem('token');
-    return rejectWithValue(error.response?.data?.message || 'Authentication failed');
+    return rejectWithValue(error.response?.data?.message || error.message || 'Authentication failed');
   }
 });
 
@@ -94,6 +137,7 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        console.log('Registration successful:', action.payload);
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;

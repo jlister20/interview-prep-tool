@@ -18,14 +18,14 @@ import {
   Alert,
   CircularProgress,
   Chip,
-  Stack
+  Stack,
 } from '@mui/material';
 import {
   Description,
   QuestionAnswer,
   Feedback,
   Schedule,
-  ArrowForward
+  ArrowForward,
 } from '@mui/icons-material';
 import { getDocuments, DocumentState } from '../store/slices/documentSlice';
 import { interviewAPI } from '../services/api';
@@ -136,9 +136,9 @@ const DashboardPage = () => {
               </Typography>
             </CardContent>
             <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
-              <Button 
-                variant="contained" 
-                component={RouterLink} 
+              <Button
+                variant="contained"
+                component={RouterLink}
                 to="/upload"
                 endIcon={<ArrowForward />}
               >
@@ -161,9 +161,9 @@ const DashboardPage = () => {
               </Typography>
             </CardContent>
             <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
-              <Button 
-                variant="contained" 
-                component={RouterLink} 
+              <Button
+                variant="contained"
+                component={RouterLink}
                 to="/interview"
                 endIcon={<ArrowForward />}
                 disabled={!cv || !jobSpec}
@@ -187,9 +187,9 @@ const DashboardPage = () => {
               </Typography>
             </CardContent>
             <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
-              <Button 
-                variant="contained" 
-                component={RouterLink} 
+              <Button
+                variant="contained"
+                component={RouterLink}
                 to={`/feedback/${sessionHistory[0]?.id || '1'}`}
                 endIcon={<ArrowForward />}
                 disabled={sessionHistory.length === 0}
